@@ -140,51 +140,60 @@ if (rect.left > 0 && rect.left < rect.right && rect.top < rect.bottom) {
 
 Steps to infer model from input bitmap:
 
-1. Read the input  shape
+
+i. Read the input  shape
 
 ```bash
-// MNETSSD_INPUT_LAYER is the input layer of model
+# MNETSSD_INPUT_LAYER is the input layer of model
 int[] mInputTensorShapeHWC =mNeuralnetwork.getInputTensorsShapes().get(MNETSSD_INPUT_LAYER);
 
 ```
 
-2. Allocate the single input tensor
+ii. Allocate the single input tensor
 
 ```bash
+
 mInputTensorReused = mNeuralnetwork.createFloatTensor(mInputTensorShapeHWC);
 ```
-3. Add it to the map of inputs, even if it's a single input
+
+iii. Add it to the map of inputs, even if it's a single input
+
 ```bash
+
 Map<String, FloatTensor> mInputTensorsMap = new HashMap<>();
 final float[] values = new float[mInputTensorReused.getSize()];
 mInputTensorReused.read(values, 0, values.length);
 mInputTensorsMap.put(MNETSSD_INPUT_LAYER, mInputTensorReused);
 ```
+
 The resized bitmap is converted to grey scale before giving it as input to the model. Basic image processing depends on the kind of input shape required by the model, then converting that processed image into the tensor is required.
 
 The output is obtained  through NeuralNetwork API
 
 ```bash
-Map<String,FloatTensor> outputs = mNeuralnetwork.execute(mInputTensorsMap);
 
+Map<String,FloatTensor> outputs = mNeuralnetwork.execute(mInputTensorsMap);
 ```
 The prediction API requires a tensor format with type Float which returns facial expression recognition in Map<String, FloatTensor> object. The size of FloatTensor is 1. The value of  Floatensor contains array with 7 elements.  Index of  largest value in that array gives the facial expression prediction.The predicted expression can be found in  lookupMsCoco table.
 
-#The Hashmap of facial expressions versus index
+## The Hashmap of facial expressions versus index
 
 ```bash
+
 final Map<String, FloatTensor> outputs =inferenceOnBitmap(modelInputBitmap);
 if(outputs != null) {
     for (Map.Entry<String, FloatTensor> output : outputs.entrySet()) {
         final FloatTensor tensor = output.getValue();
         final float[] values = new float[tensor.getSize()];
         tensor.read(values, 0, values.length);
+        # getMax method gives the index of largest float in values array
         int index = Util.getMax(values);
         text = lookupMsCoco(index, "");
         Logger.d(TAG, "text " + text + "");
     }
 }
 ```
+
 
 
 
