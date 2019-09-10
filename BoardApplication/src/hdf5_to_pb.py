@@ -1,10 +1,9 @@
 from keras.models import load_model
 from keras import backend as K
 import tensorflow as tf
+import argparse
 
 K.set_learning_phase(0)
-
-model = load_model('../trained_keras_models/simple_CNN.530-0.65.hdf5')
 
 def freeze_session(session, keep_var_names=None, output_names=None, clear_devices=True):
     """
@@ -33,10 +32,37 @@ def freeze_session(session, keep_var_names=None, output_names=None, clear_device
         return frozen_graph
 
 
-frozen_graph = freeze_session(K.get_session(),
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+      '--input_dir',
+      type=str,
+      default='../models/trained_keras_models/simple_CNN.530-0.65.hdf5',
+      help='Path to trained keras model.'
+    )
+    parser.add_argument(
+      '--output_dir',
+      type=str,
+      default='../models/converted_tensorflow_models',
+      help='Path for converted tensorflow model.'
+    )
+    parser.add_argument(
+        '--graph_name',
+        type=str,
+        default='tf_model.pb',
+        help='Name of the tensorflow graph with .pb extension'
+    )
+
+
+    args = parser.parse_args()
+    model = load_model(args.input_dir)
+
+    frozen_graph = freeze_session(K.get_session(),
                               output_names=[out.op.name for out in model.outputs])
 
-# Save to '../converted_tensorflow_models/tf_model.pb'
-tf.train.write_graph(frozen_graph, "../converted_tensorflow_models", "tf_model.pb", as_text=False)
-print('model input name: ', model.inputs)
-print('model output name: ', model.outputs)
+    tf.train.write_graph(frozen_graph, args.output_dir,args.graph_name, as_text=False)
+
+    print('model input name: ', model.inputs)
+    print('model output name: ', model.outputs)
