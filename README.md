@@ -44,10 +44,11 @@ The application opens a camera preview(restricted only for front camera), collec
 * Switch on the display and choose the USB connection option to File Transfer
 * Check if adb is installed in the windows/linux device, if not follow the below instructions in the below link to install
    https://developer.android.com/studio/command-line/adb.html.
-* Use the below command to install the apk the connected device with help of adb. [Download APK(Debug)](QC_DashCam/app/build/outputs/apk/debug)
+* Use the below command to install the apk the connected device with help of adb. [Download APK(Debug)](./AndroidApplication/Output/app-debug.apk)
    $ adb install app-debug.apk
 * Search the Facial Expression Recognition app in the app menu and launch the application
 
 ## Screenshot of the application
 <img src="./AndroidApplication/app/src/main/res/drawable/fer_screenshot.png" widht=640 height=360 />
+
 
